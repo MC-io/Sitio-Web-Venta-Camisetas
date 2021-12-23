@@ -242,18 +242,6 @@ DELIMITER ;
 
 /*************** -- DIRECCION -- *********************/
 
-/***************  EMAIL  **************************/
-/*
-CREATE TABLE IF NOT EXISTS Emails(
-	ID INTEGER PRIMARY KEY AUTO_INCREMENT,
-    Email VARCHAR(50),
-    Interesado BOOL,
-    ID_Contacto INTEGER
-);
-*/
-
-/***************  -- EMAIL --  **************************/
-
 /***************  TELEFONO  **************************/
 /*
 CREATE TABLE IF NOT EXISTS Telefonos(
@@ -364,6 +352,105 @@ END;
 //
 DELIMITER ;
 /************ -- PROVEEDOR -- **************************/
+
+/************ CATEGORIA **************************/
+/*
+CREATE TABLE IF NOT EXISTS Categorias(
+	ID INTEGER AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(30) NOT NULL,
+    Descripcion TEXT
+);
+*/
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS insertar_Categoria; //
+CREATE PROCEDURE insertar_Categoria(
+	IN _Nombre VARCHAR(30),
+    IN _Descripcion TEXT)
+BEGIN
+    DECLARE _ID INTEGER;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
+        SELECT @error_string;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF(SELECT COUNT(*) FROM Categorias WHERE Nombre = _Nombre) = 0 THEN  /* Si la categoria no existe */
+            INSERT INTO Categorias VALUES (_Nombre, _Descripcion);
+        END IF;
+    COMMIT;
+END;
+//
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS actualizar_NombreCategoria; //
+CREATE PROCEDURE actualizar_NombreCategoria(
+	IN _Nombre VARCHAR(30), 
+    IN _NewNombre VARCHAR(30))
+BEGIN
+	DECLARE _ID INTEGER;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlsate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
+        SELECT @error_string;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF(SELECT COUNT(*) FROM Categorias WHERE Nombre = _Nombre) = 1 THEN  /* Si existe la categoria con ese nombre */
+            SET _ID = (SELECT ID FROM Categorias WHERE Nombre = _Nombre);  /* Sacamos su ID */
+            UPDATE Categorias SET Nombre = _NewNombre WHERE ID = _ID;  /* Actualizamoa */
+        END IF;
+    COMMIT;
+END;
+//
+DELIMITER ;
+
+/************ -- CATEGORIA -- **************************/
+
+/************ TARJETA **************************/
+/*
+CREATE TABLE IF NOT EXISTS Tarjetas(
+	ID INTEGER AUTO_INCREMENT,
+    NumeroTarjeta INTEGER,
+    CVV TINYINT,
+    Nombre VARCHAR(50),
+    MMAA  TINYINT,
+    PrimerApellido VARCHAR(30),
+    SegundoApellido VARCHAR(30),
+    Email VARCHAR (30),
+    ID_Usuario INTEGER,
+    PRIMARY KEY(ID, ID_Usuario)
+);
+*/
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS insertar_Tarjeta; //
+CREATE PROCEDURE insertar_Tarjeta(
+    IN _NumeroTarjeta INTEGER,
+    IN _CVV TINYINT,
+    IN _Nombre VARCHAR(50),
+    IN _MMAA  TINYINT,
+    IN _PrimerApellido VARCHAR(30),
+    IN _SegundoApellido VARCHAR(30),
+    IN _Email VARCHAR (30),
+    IN _ID_Usuario INTEGER)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
+        SELECT @error_string;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF(SELECT COUNT(*) FROM Usuarios WHERE DNI = _ID_Usuario) = 1 THEN  
+            INSERT INTO Tarjetas VALUES (_NumeroTarjeta, _CVV, _Nombre, _MMAA, _PrimerApellido, _SegundoApellido, _Email, _ID_Usuario);
+        END IF;
+    COMMIT;
+END;
+//
+
+/************ -- TARJETA -- **************************/
 
 /***************  PRODUCTO // PROVEEDORES - PRODUCTOS **************************/
 /*
@@ -562,9 +649,10 @@ BEGIN
 				IF(SELECT COUNT(*) FROM  Productos_Carrito WHERE ID_Producto = _ID_Producto AND ID_Carrito = _IDCarrito ) = 1 THEN
 					SET _Cantidad = (SELECT Cantidad FROM Productos_Carrito WHERE ID_Producto = _ID_Producto AND ID_Carrito = _IDCarrito );  
                     IF(_CantidadQuitar > _Cantidad) THEN 
-						SET _CantidadQuitar = _Cantidad;
+						DELETE FROM Productos_Carrito WHERE ID_Producto = _ID_Producto AND ID_Carrito = _IDCarrito;
+                    ELSE
+						UPDATE Productos_Carrito SET Cantidad = _Cantidad - _CantidadQuitar WHERE ID_Producto = _ID_Producto AND ID_Carrito = _IDCarrito;
                     END IF;
-                    UPDATE Productos_Carrito SET Cantidad = _Cantidad - _CantidadQuitar WHERE ID_Producto = _ID_Producto AND ID_Carrito = _IDCarrito;
 					UPDATE CarritoCompras SET Total = Total(_IDCarrito) WHERE ID = _IDCarrito;
                 END IF;
 			END IF;
@@ -659,3 +747,58 @@ END;
 
 
 /***************  -- PEDIDOS -- **************************/
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists registrar_usr//
+create procedure registrar_usr(
+	in _dni int,
+	in _nombres varchar(30),
+	in _prim_ape varchar(30),
+	in _seg_ape varchar(30),
+	in _pais varchar(30),
+	in _fecha_nac date,
+	in _email varchar(50),
+	in _paswrd varchar(200),
+    in _interesado bool)
+begin
+	declare _id_pais int;
+    declare _id_contacto int;
+    declare EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
+        SELECT @error_string;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF(SELECT COUNT(*) FROM usuarios WHERE DNI = _dni) = 0 THEN /* Si no existe ya */
+			IF(SELECT COUNT(*) FROM loginusr WHERE Email = _email) = 0 THEN  /* Y el nombre del pais existe */
+				set _id_pais = (select p.ID
+                from paises p
+                where _pais = p.Nombre
+                );
+                insert into contacto values (_email, _interesado);
+                set _id_contacto = (select last_insert_id());
+                insert into usuarios values (_dni, _nombres, _prim_ape, _seg_ape,_id_pais,_fecha_nac,_id_contacto);
+                insert into loginusr values (_dni, _email, _paswrd);
+            END IF;
+        END IF;
+    COMMIT;
+end ;
+// 
+DELIMITER ; 
+
+DELIMITER //
+drop procedure if exists verify_login //
+create procedure verify_login(
+	in _email varchar(50), 
+    in _passwrd varchar(200))
+begin
+    select *
+    from loginusr l
+    where _email = l.Email and _passwrd = l.Contrasena;
+end;
+//
+DELIMITER ;
