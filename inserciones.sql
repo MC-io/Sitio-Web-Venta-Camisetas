@@ -1,6 +1,8 @@
 
 use sin_nombre;
 
+
+
 # Insertando paises
 
 insert into paises
@@ -33,6 +35,26 @@ insert into paises
 values (null,'Rusia','Europa');
 insert into paises
 values (null,'Reino Unido','Europa');
+
+
+# Insertando ciudades
+
+call insertar_Ciudad('Arequipa','Peru');
+call insertar_Ciudad('Lima','Peru');
+call insertar_Ciudad('Santiago','Chile');
+call insertar_Ciudad('Berlin','Alemania');
+call insertar_Ciudad('Londres','Reino Unido');
+call insertar_Ciudad('El Cairo','Egipto');
+call insertar_Ciudad('Sydney','Australia');
+call insertar_Ciudad('Bali','Indonesia');
+call insertar_Ciudad('Osaka','Japon');
+call insertar_Ciudad('Seul','Corea del Sur');
+call insertar_Ciudad('Paris','Francia');
+call insertar_Ciudad('Tokyo','Japon');
+call insertar_Ciudad('Cusco','Peru');
+call insertar_Ciudad('Austin','Estados Unidos');
+call insertar_Ciudad('Hamburgo','Alemania');
+
 
 # Insertando usuarios :D
 
