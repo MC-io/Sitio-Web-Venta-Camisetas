@@ -4,7 +4,9 @@ CREATE DATABASE sin_nombre;
 USE sin_nombre;
 
 CREATE TABLE IF NOT EXISTS Contacto(
-	ID INTEGER PRIMARY KEY AUTO_INCREMENT
+	ID INTEGER PRIMARY KEY AUTO_INCREMENT,
+    Email VARCHAR(50),
+    Interesado BOOL
 );
 
 CREATE TABLE IF NOT EXISTS Usuarios(
@@ -22,13 +24,6 @@ CREATE TABLE IF NOT EXISTS LoginUsr(
     DNI INTEGER PRIMARY KEY,
     Email VARCHAR(50),
     Contrasena VARCHAR(200)
-)
-
-CREATE TABLE IF NOT EXISTS Emails(
-	ID INTEGER PRIMARY KEY AUTO_INCREMENT,
-    Email VARCHAR(50),
-    Interesado BOOL,
-    ID_Contacto INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS Telefonos(
@@ -58,13 +53,6 @@ CREATE TABLE Paises(
     Continente ENUM('África', 'Asia', 'América', 'Antártida', 'Europa', 'Oceanía')
 );
 
-CREATE TABLE Sedes(
-	ID INTEGER PRIMARY KEY,
-    Nombre VARCHAR(30),
-    Estado ENUM('Activo','No Activo'),
-    ID_Ciudad INTEGER
-);
-
 CREATE TABLE IF NOT EXISTS Productos(
 	ID INTEGER AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(30),
@@ -72,6 +60,7 @@ CREATE TABLE IF NOT EXISTS Productos(
     Precio DECIMAL(16,2),
     Talla ENUM('XS', 'S', 'M', 'L', 'XL', 'XXL'),
     Para ENUM('F', 'M'),
+    Stock INTEGER DEFAULT 0,
     ID_Categoria INTEGER
 );
 
@@ -88,22 +77,20 @@ CREATE TABLE IF NOT EXISTS Pedidos(
     DNI_Usuario INTEGER NOT NULL,
     ID_Direccion INTEGER NOT NULL,
     Total DECIMAL DEFAULT 0.00 NOT NULL,
-	ID_Cupon INTEGER DEFAULT NULL,
-    ID_Carrito INTEGER NOT NULL
+	ID_Cupon INTEGER DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Productos_Pedido(
+	ID_Producto INTEGER,
+    ID_Pedido INTEGER,
+    Cantidad INTEGER,
+    PRIMARY KEY(ID_Producto, ID_Pedido)
 );
 
 CREATE TABLE IF NOT EXISTS CuponesDescuentos(
 	ID INTEGER AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(30),
     Porcentaje DECIMAL(10,2)
-);
-
-CREATE TABLE IF NOT EXISTS LibroReclamaciones(
-	ID INTEGER AUTO_INCREMENT,
-    Reclamo TEXT,
-    Fecha DATETIME,
-    ID_Usuario INTEGER,
-    PRIMARY KEY(ID, ID_Usuario)
 );
 
 CREATE TABLE IF NOT EXISTS Proveedores(
@@ -118,9 +105,8 @@ CREATE TABLE IF NOT EXISTS Proveedores_Productos(
 );
 
 CREATE TABLE IF NOT EXISTS CarritoCompras(
-	ID INTEGER AUTO_INCREMENT,
-    ID_Usuario INTEGER,
-    PRIMARY KEY (ID, ID_usuario)
+	ID INTEGER PRIMARY KEY,
+    Total INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS Productos_Carrito(
@@ -143,18 +129,9 @@ CREATE TABLE IF NOT EXISTS Tarjetas(
     PRIMARY KEY(ID, ID_Usuario)
 );
 
-CREATE TABLE IF NOT EXISTS Productos_Sedes(
-	ID_Producto INTEGER,
-    ID_Sede INTEGER,
-    Stock INTEGER DEFAULT 0,
-    PRIMARY KEY(ID_Producto, ID_Sede)
-);
-
-
 ALTER TABLE Usuarios ADD FOREIGN KEY (ID_Contacto) REFERENCES Contacto (ID);
 ALTER TABLE LoginUsr ADD FOREIGN KEY (DNI) REFERENCES Usuarios (DNI);
 ALTER TABLE Proveedores ADD FOREIGN KEY (ID) REFERENCES Contacto (ID);
-ALTER TABLE Emails ADD FOREIGN KEY (ID_Contacto) REFERENCES Contacto (ID);
 ALTER TABLE Telefonos ADD FOREIGN KEY (ID_Contacto) REFERENCES Contacto (ID);
 ALTER TABLE Direcciones ADD FOREIGN KEY (ID_Contacto) REFERENCES Contacto (ID);
 ALTER TABLE Direcciones ADD FOREIGN KEY (ID_Ciudad) REFERENCES Ciudades (ID);
@@ -162,16 +139,12 @@ ALTER TABLE Ciudades ADD FOREIGN KEY (ID_Pais) REFERENCES Paises (ID);
 ALTER TABLE Pedidos ADD FOREIGN KEY (DNI_Usuario) REFERENCES Usuarios (DNI);
 ALTER TABLE Pedidos ADD FOREIGN KEY (ID_Direccion) REFERENCES Direcciones (ID);
 ALTER TABLE Pedidos ADD FOREIGN KEY (ID_Cupon) REFERENCES CuponesDescuentos (ID); 
-ALTER TABLE Pedidos ADD FOREIGN KEY (ID_Carrito) REFERENCES CarritoCompras (ID); 
+ALTER TABLE Productos_Pedido ADD FOREIGN KEY (ID_Producto) REFERENCES Productos(ID);
+ALTER TABLE Productos_Pedido ADD FOREIGN KEY (ID_Pedido) REFERENCES Pedidos(ID);
 ALTER TABLE Proveedores_Productos ADD FOREIGN KEY (ID_Proveedor) REFERENCES Proveedores (ID);
 ALTER TABLE Proveedores_Productos ADD FOREIGN KEY (ID_Producto) REFERENCES Productos (ID);
-ALTER TABLE LibroReclamaciones ADD FOREIGN KEY (ID_Usuario) REFERENCES Usuarios (DNI);
 ALTER TABLE Productos ADD FOREIGN KEY (ID_Categoria) REFERENCES Categorias (ID);
-ALTER TABLE CarritoCompras ADD FOREIGN KEY (ID_Usuario) REFERENCES Usuarios (DNI);
+ALTER TABLE CarritoCompras ADD FOREIGN KEY (ID) REFERENCES Usuarios (DNI);
 ALTER TABLE Tarjetas ADD FOREIGN KEY (ID_Usuario) REFERENCES Usuarios (DNI);
 ALTER TABLE Productos_Carrito ADD FOREIGN KEY (ID_Producto) REFERENCES Productos(ID);
 ALTER TABLE Productos_Carrito ADD FOREIGN KEY (ID_Carrito) REFERENCES CarritoCompras(ID);
-ALTER TABLE Sedes ADD FOREIGN KEY (ID) REFERENCES Contacto (ID);
-ALTER TABLE Sedes ADD FOREIGN KEY (ID_Ciudad) REFERENCES Ciudades (ID);
-ALTER TABLE Productos_Sedes ADD FOREIGN KEY (ID_Producto) REFERENCES Productos (ID);
-ALTER TABLE Productos_Sedes ADD FOREIGN KEY (ID_Sede) REFERENCES Sedes (ID); 
