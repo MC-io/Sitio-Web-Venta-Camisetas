@@ -103,7 +103,7 @@ call crear_Producto('Camiseta de la Seleccion Argentina - N10','arg10.png',22.00
 call crear_Producto('Camiseta de la Seleccion de PSG - N30','psg30.png',22.00,'S','F',5,'Clubes de UEFA','Ropamaniacos');
 call crear_Producto('Camiseta de la Seleccion de Real Madrid - N7','madrid7.png' ,25.00,'XL','F',6,'Clubes de UEFA','Polos W');
 call crear_Producto('Camiseta de la Seleccion de Bayern Munich - N8','bayern8.png',23.00,'L','M',5,'Clubes de UEFA','Polos W');
-call crear_Producto('Camiseta de la Seleccion Chilena - N12','chile12.png',25.00,'L','M',10,'Selecciones Nacionales','Interanational Clothing Team');
+call crear_Producto('Camiseta de la Seleccion Chilena - N12','chile12.png',25.00,'L','M',10,'Selecciones Nacionales','International Clothing Team');
 call crear_Producto('Camiseta de la Seleccion Peruana - N7','peru7.png',18.00,'XS','M',8,'Selecciones Nacionales','Disenos Peru');
 call crear_Producto('Camiseta del club del FC Melgar - N9','melgar9.png',20.00,'L','F',3,'Clubes del Peru','Politos de la sierra');
 call crear_Producto('Camiseta de futbol turquesa - N1','turq1.png',16.00,'L','M',6,'Color Unico','DeporTShirts');
