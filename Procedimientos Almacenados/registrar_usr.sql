@@ -29,7 +29,7 @@ begin
                 from paises p
                 where _pais = p.Nombre
                 );
-                insert into contacto values (null);
+                insert into contacto values (null, _email,0);
                 set _id_contacto = (select last_insert_id());
                 insert into usuarios values (_dni, _nombres, _prim_ape, _seg_ape,_id_pais,_fecha_nac,_id_contacto);
                 insert into loginusr values (_dni, _email, _paswrd);

@@ -286,7 +286,8 @@ CREATE TABLE IF NOT EXISTS Proveedores(
 DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_Proveedor; //
 CREATE PROCEDURE insertar_Proveedor(
-	IN _Nombre VARCHAR(30))
+	IN _Nombre VARCHAR(30),
+    IN _Email VARCHAR(30))
 BEGIN
     DECLARE _ID INTEGER;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -297,7 +298,7 @@ BEGIN
     END;
     START TRANSACTION;
 		IF(SELECT COUNT(*) FROM Proveedores WHERE Nombre = _Nombre) = 0 THEN  /* Si el proveedor ya no existe */
-            INSERT INTO Contacto VALUES (NULL);
+            INSERT INTO Contacto VALUES (NULL,_Email,0);
             SET _ID = (SELECT last_insert_id());
 			INSERT INTO Proveedores(ID, Nombre) VALUES (_ID, _Nombre); /* E insertamos */
         END IF;
@@ -464,7 +465,7 @@ CREATE TABLE IF NOT EXISTS Proveedores_Productos(
 DELIMITER //
 DROP PROCEDURE IF EXISTS crear_Producto; //
 CREATE PROCEDURE crear_Producto(
-	IN _Nombre VARCHAR(30), 
+	IN _Nombre VARCHAR(80), 
     IN _IMG BLOB,
     In _Precio DECIMAL,
     IN _Talla ENUM('XS', 'S', 'M', 'L', 'XL', 'XXL'),
