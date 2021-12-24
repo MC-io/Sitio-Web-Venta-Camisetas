@@ -3,7 +3,7 @@ use sin_nombre;
 DELIMITER //
 
 drop procedure if exists search_usrs_by_filters//
-create procedure search_usrs_by_filters(in _nombre varchar(100), in _pais varchar(30), in edad_min integer, in edad_max integer)
+create procedure search_usrs_by_filters(in _nombre varchar(100), in _pais varchar(30))
 begin 
 	select u.DNI, u.Nombres, u.PrimerApellido, u.SegundoApellido, p.Nombre, u.FechaNac
     from usuarios u
@@ -13,4 +13,4 @@ begin
     and p.Nombre like concat('%',_pais,'%') 
 end ;
 //
-DELIMITER ;
+DELIMITER ; 
