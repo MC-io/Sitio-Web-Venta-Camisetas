@@ -33,6 +33,7 @@ begin
                 set _id_contacto = (select last_insert_id());
                 insert into usuarios values (_dni, _nombres, _prim_ape, _seg_ape,_id_pais,_fecha_nac,_id_contacto);
                 insert into loginusr values (_dni, _email, _paswrd);
+                insert into CarritoCompras (ID) VALUES (_dni);
             END IF;
         END IF;
     COMMIT;

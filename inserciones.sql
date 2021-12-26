@@ -40,21 +40,72 @@ call insertar_Ciudad('Hamburgo','Alemania');
 
 
 # Insertando usuarios :D
-call registrar_usr(70861091,'Moises Alejandro','Casaverde','Aleman','Peru','2003-06-02','mcasaverde@gmail.com','contrasena');
-call registrar_usr(90438223,'Maria Alejandra','Cuellar','Quispe','Mexico','2000-11-23','mcuellar@gmail.com','contrasena1');
-call registrar_usr(18795457,'Ernesto Enrique','Perez','Acosta','Colombia','1999-10-02','eperez@gmail.com','contrasena1');
-call registrar_usr(98140854,'Zhong Xina','Ching','Cheng','Japon','2003-03-09','zching@gmail.com','contrasena1');
-call registrar_usr(90231873,'Ander Patrick','Smith','Ape','Estados Unidos','1986-08-12','asmith@gmail.com','contrasena1');
-call registrar_usr(92048497,'Louis Pierre','Macron','Gaulle','Francia','1997-01-17','lmacron@gmail.com','contrasena1');
-call registrar_usr(23456898,'Kumar Jhero','Khan','Sharma','Estados Unidos','1986-08-12','kkhan@gmail.com','contrasena1');
-call registrar_usr(72866778,'Rushell Vanessa','Zavalaga','Orozco','Peru','1975-01-15','rzava@gmail.com','contrasena2');
-call registrar_usr(72784548,'Paula','Mcdonalid','King','Francia','2003-01-03','paula.mcdonalid@example.com','contrasena2');
-call registrar_usr(74512018,'Frank','Hall','Donald','Egipto','1996-12-26','frank.king@example.com','contrasena2');
-call registrar_usr(75122018,'Curtis','Hall','Hall','Alemania','1972-06-06','curtis.hall@example.com','contrasena2');
-call registrar_usr(75145518,'Claudia','Horton','Smi','Australia','1971-06-02','claudia.horton@example.com','contrasena2');
-call registrar_usr(75421563,'Eun-jin','Lee','Chou','Corea del Sur','1999-07-14','tsuyu@example.com','contrasena2');
-call registrar_usr(13213200,'Troy','Matthews','Julie','Indonesia','1975-07-03','troy.matthews@example.com','contrasena2');
-call registrar_usr(13213200,'Claudia','Schiffer','Heinz','Alemania','1970-08-25','clau.schi@example.com','contrasena2');
+call registrar_usr(70861091,'Moises Alejandro','Casaverde','Aleman','Peru','2003-06-02','mcasaverde@gmail.com','contrasena',0);
+call registrar_usr(90438223,'Maria Alejandra','Cuellar','Quispe','Mexico','2000-11-23','mcuellar@gmail.com','contrasena1',1);
+call registrar_usr(18795457,'Ernesto Enrique','Perez','Acosta','Colombia','1999-10-02','eperez@gmail.com','contrasena1',1);
+call registrar_usr(98140854,'Zhong Xina','Ching','Cheng','Japon','2003-03-09','zching@gmail.com','contrasena1',1);
+call registrar_usr(90231873,'Ander Patrick','Smith','Ape','Estados Unidos','1986-08-12','asmith@gmail.com','contrasena1',0);
+call registrar_usr(92048497,'Louis Pierre','Macron','Gaulle','Francia','1997-01-17','lmacron@gmail.com','contrasena1',1);
+call registrar_usr(23456898,'Kumar Jhero','Khan','Sharma','Estados Unidos','1986-08-12','kkhan@gmail.com','contrasena1',0);
+call registrar_usr(72866778,'Rushell Vanessa','Zavalaga','Orozco','Peru','1975-01-15','rzava@gmail.com','contrasena2',0);
+call registrar_usr(72784548,'Paula','Mcdonalid','King','Francia','2003-01-03','paula.mcdonalid@example.com','contrasena2',0);
+call registrar_usr(74512018,'Frank','Hall','Donald','Egipto','1996-12-26','frank.king@example.com','contrasena2',0);
+call registrar_usr(75122018,'Curtis','Hall','Hall','Alemania','1972-06-06','curtis.hall@example.com','contrasena2',1);
+call registrar_usr(75145518,'Claudia','Horton','Smi','Australia','1971-06-02','claudia.horton@example.com','contrasena2',0);
+call registrar_usr(75421563,'Eun-jin','Lee','Chou','Corea del Sur','1999-07-14','tsuyu@example.com','contrasena2',0);
+call registrar_usr(13213200,'Troy','Matthews','Julie','Indonesia','1975-07-03','troy.matthews@example.com','contrasena2',1);
+call registrar_usr(13215600,'Claudia','Schiffer','Heinz','Alemania','1970-08-25','clau.schi@example.com','contrasena2',0);
+
+# Insertando direcciones
+call insertar_Direccion('Paris', 'Av. du Presidenr Wilson', 1);
+call insertar_Direccion('Tokyo', 'Suginami', 2);
+call insertar_Direccion('Hamburgo', 'Jungfernstieg', 3);
+call insertar_Direccion('Lima', 'Av. Bolivia', 4);
+call insertar_Direccion('Sydney', 'Bangalla Rd', 5);
+call insertar_Direccion('Cusco', 'Av. Garcilaso', 6);
+call insertar_Direccion('El Cairo', 'Nagib Al Rihani', 7);
+call insertar_Direccion('Seul', 'Inwangsan-ro', 8);
+call insertar_Direccion('Osaka', 'Pirundae-ro', 9);
+call insertar_Direccion('Londres', 'Berners St', 10);
+call insertar_Direccion('Berlin', 'Hannah-Arendt-Strabe', 11);
+call insertar_Direccion('Austin', 'Grover Ave', 12);
+call insertar_Direccion('Bali', 'Gg. Lalang Sari', 13);
+call insertar_Direccion('Santiago', 'Isabel Riquelme', 14);
+call insertar_Direccion('Arequipa', 'C. La Merced', 15);
+
+# Insertando Telefonos
+call insertar_Telefono(965478945, 1);
+call insertar_Telefono(962398132, 2);
+call insertar_Telefono(954122133, 3);
+call insertar_Telefono(954211032, 4);
+call insertar_Telefono(974510320, 5);
+call insertar_Telefono(967854545, 6);
+call insertar_Telefono(998465123, 7);
+call insertar_Telefono(965846546, 8);
+call insertar_Telefono(987451215, 9);
+call insertar_Telefono(998465123, 10);
+call insertar_Telefono(998765123, 11);
+call insertar_Telefono(984653213, 12);
+call insertar_Telefono(987546315, 13);
+call insertar_Telefono(984653542, 14);
+call insertar_Telefono(984532165, 15);
+
+# Insertando Tarjetas
+call insertar_Tarjeta(4000123456789010, 123, 'Maria', 1224, 'Arias', 'Tamayo', 'ar.lo@gmail.com', 1);
+call insertar_Tarjeta(4845131321345666, 156, 'Jean', 1220, 'Farn', 'Echeverri', 'jn.fe@gmail.com', 2);
+call insertar_Tarjeta(9876532135465213, 875, 'Lois', 0225, 'Patt', 'Pintt', 'lpp@gmail.com', 3);
+call insertar_Tarjeta(3203348498465465, 465, 'Antoi', 1115, 'Luu', 'Blue', 'anluu@gmail.com', 4);
+call insertar_Tarjeta(8465465465465421, 946, 'Jeun', 0802, 'Won', 'Lee', 'jeunwo@gmail.com', 5);
+call insertar_Tarjeta(8754648463164984, 463, 'Julia', 0515, 'Lopez', 'Rivero', 'julriv@gmail.com', 6);
+call insertar_Tarjeta(6546513546865465, 120, 'Sam', 0715, 'Orozco', 'De Monte', 'samonte@gmail.com', 7);
+call insertar_Tarjeta(9546542132101166, 846, 'Kol', 1129, 'Mendoza', 'Bruzual', 'kolbru@gmail.com', 8);
+call insertar_Tarjeta(7465132165487984, 845, 'Morena', 1015, 'Da Cruz', 'Ramirez', 'moreda@gmail.com', 9);
+call insertar_Tarjeta(6421032034646465, 798, 'Troy', 0622, 'Dulie', 'River', 'troydu@gmail.com', 10);
+call insertar_Tarjeta(4513203215465420, 465, 'Frank', 0411, 'Truh', 'Boy', 'frtr@gmail.com', 11);
+call insertar_Tarjeta(6548321354872103, 984, 'Karina', 1006, 'Sulo', 'Rey', 'karsul@gmail.com', 12);
+call insertar_Tarjeta(9874651635103465, 015, 'Luca', 0125, 'Lopz', 'Fernandez', 'lulop@gmail.com', 13);
+call insertar_Tarjeta(8465163516546848, 894, 'Loise', 1213, 'LaTorres', 'Alvarez', 'loisela@gmail.com', 14);
+call insertar_Tarjeta(8465484654875610, 651, 'Mar', 0211, 'Alcolea', 'Damia', 'maral@gmail.com', 15);
 
 # Insertando categorias 
 call insertar_Categoria('Selecciones nacionales','Las camisetas de la seleccion peruana y los mejores equipos nacionales del mundo');
@@ -66,13 +117,12 @@ call insertar_Categoria('Basketball','Con las camisetas de los equipos de la NBA
 call insertar_Categoria('Tenis','Las mejores camisetas para jugar Tenis');
 call insertar_Categoria('Voleyball','Las mejores camisetas para jugar el popular deporte del Volleyball');
 call insertar_Categoria('Baseball','Las camisetas de mejor calidad para este deporte tan famoso.');
-
 call insertar_Categoria('Coleccion Doil','Camisetas del reconocido confeccionista Doil Leari.');
 call insertar_Categoria('Casuales','Del dia a dia, comodas y sencillas para las actividades diarias.')
 call insertar_Categoria('Especiales','Camisetas unicas y con stock limitado.')
-call insertar_Categoria('','')
-call insertar_Categoria('','')
-call insertar_Categoria('','')
+call insertar_Categoria('Segunda Mano','Dale una segunda oportunidad a la ropa.')
+call insertar_Categoria('Atletismo','Tus favoritas de calidad.')
+call insertar_Categoria('Rugby','Las mejores camisetas de tus selecciones favoritas.')
 
 # Insertando proveedores
 call insertar_Proveedor('Disenos Peru','dperu@gmail.com');
