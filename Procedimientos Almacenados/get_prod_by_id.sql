@@ -9,6 +9,7 @@ begin
     from productos p
     inner join categorias c
     on p.ID_Categoria = c.ID;
+    where p.ID = _id;
 end ;
 //
 DELIMITER ; 
