@@ -50,7 +50,7 @@ CREATE TABLE Ciudades(
 CREATE TABLE Paises(
 	ID INTEGER PRIMARY KEY AUTO_INCREMENT,
     Nombre VARCHAR(30),
-    Continente ENUM('África', 'Asia', 'América', 'Antártida', 'Europa', 'Oceanía')
+    Continente ENUM('Africa', 'Asia', 'America', 'Antartida', 'Europa', 'Oceania')
 );
 
 CREATE TABLE IF NOT EXISTS Productos(
