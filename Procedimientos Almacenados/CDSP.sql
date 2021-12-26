@@ -466,7 +466,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS crear_Producto; //
 CREATE PROCEDURE crear_Producto(
 	IN _Nombre VARCHAR(80), 
-    IN _IMG BLOB,
+    IN _IMG VARCHAR(100),
     In _Precio DECIMAL,
     IN _Talla ENUM('XS', 'S', 'M', 'L', 'XL', 'XXL'),
     IN _Para ENUM('F', 'M'),

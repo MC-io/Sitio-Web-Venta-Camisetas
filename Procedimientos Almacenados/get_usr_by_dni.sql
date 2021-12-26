@@ -2,8 +2,8 @@ use sin_nombre;
 
 DELIMITER //
 
-drop procedure if exists search_usrs_by_filters//
-create procedure search_usrs_by_filters(in _nombre varchar(100), in _pais varchar(30))
+drop procedure if exists get_usr_by_dni//
+create procedure get_usr_by_dni(in _nombre varchar(100), in _pais varchar(30))
 begin 
 	select u.DNI, u.Nombres, u.PrimerApellido, u.SegundoApellido, p.Nombre 'Pais', u.FechaNac
     from usuarios u
