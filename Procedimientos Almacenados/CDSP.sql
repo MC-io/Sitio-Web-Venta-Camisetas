@@ -5,7 +5,7 @@ USE sin_nombre;
 CREATE TABLE Paises(
 	ID INTEGER PRIMARY KEY AUTO_INCREMENT,
     Nombre VARCHAR(30),
-    Continente ENUM('África', 'Asia', 'América', 'Antártida', 'Europa', 'Oceanía')
+    Continente ENUM('Africa', 'Asia', 'America', 'Antartida', 'Europa', 'Oceania')
 );
 */
 
@@ -13,7 +13,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_Pais; //
 CREATE PROCEDURE insertar_Pais(
 	IN _Nombre VARCHAR(30), 
-    IN _Continente ENUM('África', 'Asia', 'América', 'Antártida', 'Europa', 'Oceanía'))
+    IN _Continente ENUM('Africa', 'Asia', 'America', 'Antartida', 'Europa', 'Oceania'))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
