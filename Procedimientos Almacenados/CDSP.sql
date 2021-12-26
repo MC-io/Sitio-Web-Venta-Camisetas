@@ -209,7 +209,7 @@ BEGIN
     START TRANSACTION;
 			IF(SELECT COUNT(*) FROM Ciudades WHERE Nombre = _NombreCiudad) = 1 THEN  /* Y el nombre de la ciudad existe */
 				SET _ID_Ciudad = (SELECT ID FROM Ciudades WHERE Nombre = _NombreCiudad); /* Sacamos el ID de la ciudad */
-				INSERT INTO Direcciones(Nombre, ID_Pais) VALUES (_Nombre, _ID_Pais); /* E insertamos */
+				INSERT INTO Direcciones(ID_Ciudad, Direccion, ID_Contacto) VALUES (_ID_Ciudad, _Direccion, ID_Contacto); /* E insertamos */
         END IF;
     COMMIT;
 END;
@@ -265,7 +265,7 @@ BEGIN
     END;
     START TRANSACTION;
 		IF(SELECT COUNT(*) FROM Contacto WHERE ID = _ID_Contacto) = 1 THEN /* Si existe */
-			IF(SELECT COUNT(*) FROM Telefonos WHERE ID = _ID_Contacto AND _Telefono = Telefono) = 0 THEN  /* Si no existe ya*/
+			IF(SELECT COUNT(*) FROM Telefonos WHERE ID_Contacto = _ID_Contacto AND Telefono = _Telefono ) = 0 THEN  /* Si no existe ya*/
 					INSERT INTO Telefonos(Telefono, ID_Contacto) VALUES (_Telefono, _ID_Contacto);
 			END IF;
         END IF;
@@ -378,7 +378,7 @@ BEGIN
     END;
     START TRANSACTION;
 		IF(SELECT COUNT(*) FROM Categorias WHERE Nombre = _Nombre) = 0 THEN  /* Si la categoria no existe */
-            INSERT INTO Categorias VALUES (_Nombre, _Descripcion);
+            INSERT INTO Categorias (Nombre, Descripcion) VALUES (_Nombre, _Descripcion);
         END IF;
     COMMIT;
 END;
@@ -429,7 +429,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_Tarjeta; //
 CREATE PROCEDURE insertar_Tarjeta(
     IN _NumeroTarjeta INTEGER,
-    IN _CVV TINYINT,
+    IN _CVV INTEGER,
     IN _Nombre VARCHAR(50),
     IN _MMAA  TINYINT,
     IN _PrimerApellido VARCHAR(30),
@@ -444,8 +444,9 @@ BEGIN
         ROLLBACK;
     END;
     START TRANSACTION;
-		IF(SELECT COUNT(*) FROM Usuarios WHERE DNI = _ID_Usuario) = 1 THEN  
-            INSERT INTO Tarjetas VALUES (null,_NumeroTarjeta, _CVV, _Nombre, _MMAA, _PrimerApellido, _SegundoApellido, _Email, _ID_Usuario);
+		IF(SELECT COUNT(*) FROM Usuarios WHERE DNI = _ID_Usuario) = 1 THEN 
+        
+            INSERT INTO Tarjetas VALUES (NULL , _NumeroTarjeta, _CVV, _Nombre, _MMAA, _PrimerApellido, _SegundoApellido, _Email, _ID_Usuario);
         END IF;
     COMMIT;
 END;
@@ -751,20 +752,22 @@ END;
 
 use sin_nombre;
 
+
 DELIMITER //
 
 drop procedure if exists registrar_usr//
 create procedure registrar_usr(
-	in _dni int,
-	in _nombres varchar(30),
-	in _prim_ape varchar(30),
-	in _seg_ape varchar(30),
-	in _pais varchar(30),
-	in _fecha_nac date,
-	in _email varchar(50),
-	in _paswrd varchar(200),
-    in _interesado bool)
+in _dni int,
+in _nombres varchar(30),
+in _prim_ape varchar(30),
+in _seg_ape varchar(30),
+in _pais varchar(30),
+in _fecha_nac date,
+in _email varchar(50),
+in _paswrd varchar(200),
+in _interesado bool)
 begin
+	
 	declare _id_pais int;
     declare _id_contacto int;
     declare EXIT HANDLER FOR SQLEXCEPTION
@@ -780,10 +783,11 @@ begin
                 from paises p
                 where _pais = p.Nombre
                 );
-                insert into contacto values (_email, _interesado);
+                insert into contacto values (null, _email,_interesado);
                 set _id_contacto = (select last_insert_id());
                 insert into usuarios values (_dni, _nombres, _prim_ape, _seg_ape,_id_pais,_fecha_nac,_id_contacto);
                 insert into loginusr values (_dni, _email, _paswrd);
+                insert into CarritoCompras (ID) VALUES (_dni);
             END IF;
         END IF;
     COMMIT;

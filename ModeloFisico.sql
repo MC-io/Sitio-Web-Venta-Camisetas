@@ -55,7 +55,7 @@ CREATE TABLE Paises(
 
 CREATE TABLE IF NOT EXISTS Productos(
 	ID INTEGER AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(30),
+    Nombre VARCHAR(80),
     IMG VARCHAR(100),
     Precio DECIMAL(16,2),
     Talla ENUM('XS', 'S', 'M', 'L', 'XL', 'XXL'),
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS Productos_Carrito(
 
 CREATE TABLE IF NOT EXISTS Tarjetas(
 	ID INTEGER AUTO_INCREMENT,
-    NumeroTarjeta INTEGER,
+    NumeroTarjeta VARCHAR(80),
     CVV INTEGER,
     Nombre VARCHAR(50),
     MMAA VARCHAR(10),
