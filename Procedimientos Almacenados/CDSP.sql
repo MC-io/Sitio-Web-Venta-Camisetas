@@ -445,7 +445,7 @@ BEGIN
     END;
     START TRANSACTION;
 		IF(SELECT COUNT(*) FROM Usuarios WHERE DNI = _ID_Usuario) = 1 THEN  
-            INSERT INTO Tarjetas VALUES (_NumeroTarjeta, _CVV, _Nombre, _MMAA, _PrimerApellido, _SegundoApellido, _Email, _ID_Usuario);
+            INSERT INTO Tarjetas VALUES (null,_NumeroTarjeta, _CVV, _Nombre, _MMAA, _PrimerApellido, _SegundoApellido, _Email, _ID_Usuario);
         END IF;
     COMMIT;
 END;
