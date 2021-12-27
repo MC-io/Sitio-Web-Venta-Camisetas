@@ -758,7 +758,7 @@ DELIMITER //
 drop procedure if exists registrar_usr//
 create procedure registrar_usr(
 in _dni int,
-in _nombres varchar(30),
+in _nombres varchar(30),    
 in _prim_ape varchar(30),
 in _seg_ape varchar(30),
 in _pais varchar(30),
@@ -805,5 +805,180 @@ begin
     from loginusr l
     where _email = l.Email and _passwrd = l.Contrasena;
 end;
+//
+DELIMITER ;
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists actualizar_producto//
+create procedure actualizar_producto(
+    IN _ID INTEGER,
+    IN _Nombre VARCHAR(80), 
+    IN _IMG VARCHAR(100),
+    In _Precio DECIMAL,
+    IN _Talla ENUM('XS', 'S', 'M', 'L', 'XL', 'XXL'),
+    IN _Para ENUM('F', 'M'),
+    IN _Stock INTEGER,
+    IN _NombreCategoria VARCHAR(30),
+    IN _NombreProveedor VARCHAR(30))
+BEGIN
+	DECLARE _ID_Categoria INTEGER;
+    DECLARE _ID_Proveedor INTEGER;
+    DECLARE _ID_Proveedor_anterior INTEGER;
+    DECLARE _ID INTEGER;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
+        SELECT @error_string;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF(SELECT COUNT(*) FROM Categorias WHERE Nombre = _NombreCategoria) = 1 THEN /* Si la categoria existe */
+			IF(SELECT COUNT(*) FROM Proveedores WHERE Nombre = _NombreProveedor) = 1 THEN /* Si el proveedor existe */
+				SET _ID_Categoria = (SELECT ID FROM Categorias WHERE Nombre = _NombreCategoria); /* Sacamos el ID de la categoria */
+				SET _ID_Proveedor = (SELECT ID FROM Proveedores WHERE Nombre = _NombreProveedor); /* Sacamos el ID del proveedor  */
+				SET _ID_Proveedor_anterior = (SELECT ID_Proveedor FROM productos WHERE ID = _ID);
+				UPDATE Productos SET Nombre = _Nombre, IMG = _IMG, Precio = _Precio, Talla = _Talla, Para = _Para, Stock = _Stock, ID_Categoria = _ID_Categoria WHERE ID = _ID; /* E insertamos */
+				SET _ID = (SELECT last_insert_id()); /* Obtenemos su ID */
+				UPDATE Proveedores_Productos SET ID_Proveedor = _ID_Proveedor WHERE _ID_Proveedor =_ID_Proveedor_anterior AND ID_Producto = ID; /* Insertamos en proveedores */
+			END IF ;
+		END IF;
+    COMMIT;
+END;
+//
+DELIMITER ;
+
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists ganancias_por_prod//
+create procedure ganancias_por_prod()
+begin
+	select p.ID, p.Nombre, p.IMG, p.Precio, p.Talla, p.Para, c.Nombre 'Categoria', sum(p.Precio * pp.Cantidad) 'Ganancias'
+    from productos p
+    inner join categorias c
+    inner join productos_pedido pp
+    on pp.ID_Producto = p.ID and c.ID = p.ID_Categoria 
+    inner join pedidos pe 
+    on pe.ID = pp.ID_Pedido;
+end ;
+//
+DELIMITER ;
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists get_all_prods//
+create procedure get_all_prods()
+begin
+	select p.ID, p.Nombre, p.IMG, p.Precio, p.Talla, p.Para, c.Nombre 'Categoria'
+    from productos p
+    inner join categorias c
+    on p.ID_Categoria = c.ID;
+end ;
+//
+DELIMITER ;
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists get_all_usrs//
+create procedure get_all_usrs()
+begin 
+	select u.DNI, u.Nombres, u.PrimerApellido, u.SegundoApellido, p.Nombre 'Pais', u.FechaNac
+    from usuarios u
+    inner join paises p
+    on p.ID = u.Pais;
+end ;
+//
+DELIMITER ; 
+
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists get_prod_by_id//
+create procedure get_prod_by_id(in _id integer)
+begin 
+	select p.ID, p.Nombre, p.IMG, p.Precio, p.Talla, p.Para, p.Stock, c.Nombre 'Categoria'
+    from productos p
+    inner join categorias c
+    on p.ID_Categoria = c.ID;
+    where p.ID = _id;
+end ;
+//
+DELIMITER ; 
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists get_usr_by_dni//
+create procedure get_usr_by_dni(in _dni integer)
+begin 
+	select u.DNI, u.Nombres, u.PrimerApellido, u.SegundoApellido, p.Nombre 'Pais', u.FechaNac
+    from usuarios u
+    inner join paises p
+    on p.ID = u.Pais
+    where u.DNI = _DNI;
+end ;
+//
+DELIMITER ; 
+
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists search_prods_by_category//
+create procedure search_prods_by_category(in cat_nom varchar(30))
+begin
+	select p.ID, p.Nombre, p.IMG, p.Precio, p.Talla, p.Para, c.Nombre
+    from productos p
+    inner join categorias c
+    on p.ID_Categoria = c.ID
+    where lower(cat_nom) = lower(c.Nombre);
+end ;
+//
+DELIMITER ;
+
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists search_usrs_by_filters//
+create procedure search_usrs_by_filters(in _nombre varchar(100), in _pais varchar(30))
+begin 
+	select u.DNI, u.Nombres, u.PrimerApellido, u.SegundoApellido, p.Nombre 'Pais', u.FechaNac
+    from usuarios u
+    inner join paises p
+    on p.ID = u.Pais
+    where concat(u.Nombres,' ',u.PrimerApellido,' ',u.SegundoApellido) like concat("%",_nombre,'%') 
+    and p.Nombre like concat('%',_pais,'%');
+end ;
+//
+DELIMITER ; 
+
+use sin_nombre;
+
+DELIMITER //
+
+drop procedure if exists search_usrs_by_fullname//
+create procedure search_usrs_by_fullname(in _nombre varchar(100))
+begin
+	select u.DNI, u.Nombres, u.PrimerApellido, u.SegundoApellido, p.Nombre, u.FechaNac
+    from usuarios u
+    inner join paises p
+    on p.ID = u.Pais
+    where concat(u.Nombres,' ',u.PrimerApellido,' ',u.SegundoApellido) like concat("%",_nombre,'%'); 
+end ;
 //
 DELIMITER ;
