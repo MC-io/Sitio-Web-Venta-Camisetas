@@ -76,8 +76,7 @@ CREATE TABLE IF NOT EXISTS Pedidos(
     Estado ENUM('Pendiente', 'Procesando', 'En Transporte', 'Completo', 'Devuelto', 'Cancelado') NOT NULL,
     DNI_Usuario INTEGER NOT NULL,
     ID_Direccion INTEGER NOT NULL,
-    Total DECIMAL DEFAULT 0.00 NOT NULL,
-	ID_Cupon INTEGER DEFAULT NULL
+    Total DECIMAL DEFAULT 0.00 NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Productos_Pedido(
@@ -132,7 +131,6 @@ ALTER TABLE Direcciones ADD FOREIGN KEY (ID_Ciudad) REFERENCES Ciudades (ID);
 ALTER TABLE Ciudades ADD FOREIGN KEY (ID_Pais) REFERENCES Paises (ID);
 ALTER TABLE Pedidos ADD FOREIGN KEY (DNI_Usuario) REFERENCES Usuarios (DNI);
 ALTER TABLE Pedidos ADD FOREIGN KEY (ID_Direccion) REFERENCES Direcciones (ID);
-ALTER TABLE Pedidos ADD FOREIGN KEY (ID_Cupon) REFERENCES CuponesDescuentos (ID); 
 ALTER TABLE Productos_Pedido ADD FOREIGN KEY (ID_Producto) REFERENCES Productos(ID);
 ALTER TABLE Productos_Pedido ADD FOREIGN KEY (ID_Pedido) REFERENCES Pedidos(ID);
 ALTER TABLE Proveedores_Productos ADD FOREIGN KEY (ID_Proveedor) REFERENCES Proveedores (ID);
