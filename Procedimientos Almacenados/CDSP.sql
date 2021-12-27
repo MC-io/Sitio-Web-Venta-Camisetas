@@ -414,9 +414,9 @@ DELIMITER ;
 CREATE TABLE IF NOT EXISTS Tarjetas(
 	ID INTEGER AUTO_INCREMENT,
     NumeroTarjeta INTEGER,
-    CVV TINYINT,
+    CVV INTEGER,
     Nombre VARCHAR(50),
-    MMAA  TINYINT,
+    MMAA  VARCHAR(10),
     PrimerApellido VARCHAR(30),
     SegundoApellido VARCHAR(30),
     Email VARCHAR (30),
@@ -428,10 +428,10 @@ CREATE TABLE IF NOT EXISTS Tarjetas(
 DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_Tarjeta; //
 CREATE PROCEDURE insertar_Tarjeta(
-    IN _NumeroTarjeta VARCHAR(30),
+    IN _NumeroTarjeta VARCHAR(80),
     IN _CVV INTEGER,
     IN _Nombre VARCHAR(50),
-    IN _MMAA  TINYINT,
+    IN _MMAA VARCHAR(10),
     IN _PrimerApellido VARCHAR(30),
     IN _SegundoApellido VARCHAR(30),
     IN _Email VARCHAR (30),
