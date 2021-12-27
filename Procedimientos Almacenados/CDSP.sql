@@ -428,7 +428,7 @@ CREATE TABLE IF NOT EXISTS Tarjetas(
 DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_Tarjeta; //
 CREATE PROCEDURE insertar_Tarjeta(
-    IN _NumeroTarjeta INTEGER,
+    IN _NumeroTarjeta VARCHAR(30),
     IN _CVV INTEGER,
     IN _Nombre VARCHAR(50),
     IN _MMAA  TINYINT,
