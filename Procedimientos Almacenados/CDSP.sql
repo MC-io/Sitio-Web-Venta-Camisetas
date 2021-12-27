@@ -637,6 +637,7 @@ CREATE PROCEDURE insertar_ProductoCarrito(
 BEGIN
 	DECLARE _ID_Producto INTEGER;
     DECLARE _Stock INTEGER;
+    DECLARE _ANTES INTEGER;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
@@ -651,7 +652,16 @@ BEGIN
                 IF(_Cantidad > _Stock) THEN
 					SET _Cantidad = _Stock;
 				END IF;
-                INSERT INTO Productos_Carrito(ID_Producto, ID_Carrito, Cantidad) VALUES (_ID_Producto, _IDCarrito, _Cantidad);
+                IF(SELECT COUNT(*) FROM Productos_Carrito WHERE ID_Carrito = _IDCarrito AND ID_Producto = _ID_Producto) = 1 THEN 
+                    SET _ANTES = SELECT Cantidad FROM Productos_Carrito WHERE ID_Carrito = _IDCarrito AND ID_Producto = _ID_Producto;
+                    SET _Cantidad = _Cantidad + _ANTES;
+                    IF(_Cantidad > _Stock) THEN
+					    SET _Cantidad = _Stock;
+				    END IF;
+                    UPDATE Productos_Carrito SET Cantidad = _Cantidad WHERE ID_Carrito = _IDCarrito AND ID_Producto = _ID_Producto
+                ELSE 
+                    INSERT INTO Productos_Carrito(ID_Producto, ID_Carrito, Cantidad) VALUES (_ID_Producto, _IDCarrito, _Cantidad);
+                END IF;
                 UPDATE CarritoCompras SET Total = Total(_IDCarrito) WHERE ID = _IDCarrito;
 			END IF;
 		END IF;
@@ -721,6 +731,13 @@ CREATE TABLE IF NOT EXISTS Productos(
     ID_Categoria INTEGER
 );
 
+CREATE TABLE IF NOT EXISTS Productos_Pedido(
+	ID_Producto INTEGER,
+    ID_Pedido INTEGER,
+    Cantidad INTEGER,
+    PRIMARY KEY(ID_Producto, ID_Pedido)
+);
+
 */
 
 DELIMITER //
@@ -732,6 +749,7 @@ CREATE PROCEDURE crear_Pedido(
 BEGIN
     DECLARE _Total INTEGER;
 	DECLARE _Fecha DATETIME;
+    DECLARE _IDPedido INTEGER;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
@@ -742,8 +760,10 @@ BEGIN
 		SET _Fecha = NOW();
         SET _Total = Total(_DNI_Usuario);
         IF (_Total > 0) THEN
-			INSERT INTO Pedidos(Fecha, Estado, DNI_Usuario, ID_Direccion, Total, ID_Cupon) VALUES (_Fecha, "Pendiente", _DNI_Usuario, _ID_Direccion, _Total, _ID_Cupon);
-		END IF;
+            INSERT INTO Pedidos(Fecha, Estado, DNI_Usuario, ID_Direccion, Total) VALUES (_Fecha, "Pendiente", _DNI_Usuario, _ID_Direccion, _Total);
+            SET _IDPedido = (SELECT last_insert_id());
+            call vaciar_Carrito(_DNI_Usuario);
+        END IF;
     COMMIT;
 END;
 //

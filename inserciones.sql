@@ -176,3 +176,5 @@ call insertar_ProductoCarrito('Camiseta de la Seleccion Argentina - N10', 981408
 call insertar_ProductoCarrito('Camiseta Basketball Chicago Bulls', 90231873, 6);}
 
 call insertar_ProductoCarrito('Camiseta de futbol turquesa - N1', 18795457, 10);
+
+call crear_Pedido(70861091, 1, 0);
