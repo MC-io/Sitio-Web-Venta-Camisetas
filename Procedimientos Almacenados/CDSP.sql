@@ -598,9 +598,20 @@ CREATE TABLE IF NOT EXISTS CarritoCompras(
 */
 
 DELIMITER //
+DROP FUNCTION IF EXISTS Total; //
+CREATE FUNCTION Total(
+	DNI_Usuario INTEGER
+) RETURNS DECIMAL(16,2) DETERMINISTIC
+BEGIN
+	DECLARE _Total DECIMAL (16,2);
+    SET _Total = (SELECT SUM(P.Precio*PC.Cantidad) FROM Productos_Carrito PC, Productos P WHERE PC.ID_Carrito = DNI_Usuario AND PC.ID_Producto = P.ID);
+	RETURN _Total;
+END;
+
+DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_ProductoCarrito; // 
 CREATE PROCEDURE insertar_ProductoCarrito(
-	IN _NombreProducto VARCHAR(30),
+	IN _NombreProducto VARCHAR(80),
     IN _IDCarrito INTEGER,
     IN _Cantidad INTEGER)
 BEGIN
@@ -691,15 +702,6 @@ CREATE TABLE IF NOT EXISTS Productos(
 );
 
 */
-DELIMITER //
-DROP FUNCTION IF EXISTS Total; //
-CREATE FUNCTION Total(
-	DNI_Usuario
-) RETURNS INT DETERMINISTIC
-BEGIN
-	DECLARE _Total;
-    SET _Total = (SELECT SUM(P.Precio*PC.Cantidad) FROM Productos_Carrito PC, Productos P WHERE PC.ID_Carrito = DNI_Usuario AND PC.ID_Producto = P.ID) 
-END;
 
 DELIMITER //
 DROP PROCEDURE IF EXISTS crear_Pedido; //
