@@ -603,10 +603,30 @@ CREATE FUNCTION Total(
 	DNI_Usuario INTEGER
 ) RETURNS DECIMAL(16,2) DETERMINISTIC
 BEGIN
-	DECLARE _Total DECIMAL (16,2);
+	DECLARE _Total DECIMAL (16,2) DEFAULT 0;
     SET _Total = (SELECT SUM(P.Precio*PC.Cantidad) FROM Productos_Carrito PC, Productos P WHERE PC.ID_Carrito = DNI_Usuario AND PC.ID_Producto = P.ID);
 	RETURN _Total;
 END;
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS vaciar_Carrito; // 
+CREATE PROCEDURE vaciar_Carrito(
+    IN _IDCarrito INTEGER)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
+        SELECT @error_string;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF(SELECT COUNT(*) FROM CarritoCompras WHERE ID = _IDCarrito) = 1 THEN /* Si el carrito existe */
+			DELETE FROM Productos_Carrito WHERE ID_Carrito = _IDCarrito;
+            UPDATE CarritoCompras SET Total = Total(_IDCarrito) WHERE ID = _IDCarrito;
+		END IF;
+    COMMIT;
+END;
+//
 
 DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_ProductoCarrito; // 
