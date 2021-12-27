@@ -414,9 +414,9 @@ DELIMITER ;
 CREATE TABLE IF NOT EXISTS Tarjetas(
 	ID INTEGER AUTO_INCREMENT,
     NumeroTarjeta INTEGER,
-    CVV TINYINT,
+    CVV INTEGER,
     Nombre VARCHAR(50),
-    MMAA  TINYINT,
+    MMAA  VARCHAR(10),
     PrimerApellido VARCHAR(30),
     SegundoApellido VARCHAR(30),
     Email VARCHAR (30),
@@ -428,10 +428,10 @@ CREATE TABLE IF NOT EXISTS Tarjetas(
 DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_Tarjeta; //
 CREATE PROCEDURE insertar_Tarjeta(
-    IN _NumeroTarjeta VARCHAR(30),
+    IN _NumeroTarjeta VARCHAR(80),
     IN _CVV INTEGER,
     IN _Nombre VARCHAR(50),
-    IN _MMAA  TINYINT,
+    IN _MMAA VARCHAR(10),
     IN _PrimerApellido VARCHAR(30),
     IN _SegundoApellido VARCHAR(30),
     IN _Email VARCHAR (30),
@@ -598,14 +598,46 @@ CREATE TABLE IF NOT EXISTS CarritoCompras(
 */
 
 DELIMITER //
+DROP FUNCTION IF EXISTS Total; //
+CREATE FUNCTION Total(
+	DNI_Usuario INTEGER
+) RETURNS DECIMAL(16,2) DETERMINISTIC
+BEGIN
+	DECLARE _Total DECIMAL (16,2) DEFAULT 0;
+    SET _Total = (SELECT SUM(P.Precio*PC.Cantidad) FROM Productos_Carrito PC, Productos P WHERE PC.ID_Carrito = DNI_Usuario AND PC.ID_Producto = P.ID);
+	RETURN _Total;
+END;
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS vaciar_Carrito; // 
+CREATE PROCEDURE vaciar_Carrito(
+    IN _IDCarrito INTEGER)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
+        SELECT @error_string;
+        ROLLBACK;
+    END;
+    START TRANSACTION;
+		IF(SELECT COUNT(*) FROM CarritoCompras WHERE ID = _IDCarrito) = 1 THEN /* Si el carrito existe */
+			DELETE FROM Productos_Carrito WHERE ID_Carrito = _IDCarrito;
+            UPDATE CarritoCompras SET Total = Total(_IDCarrito) WHERE ID = _IDCarrito;
+		END IF;
+    COMMIT;
+END;
+//
+
+DELIMITER //
 DROP PROCEDURE IF EXISTS insertar_ProductoCarrito; // 
 CREATE PROCEDURE insertar_ProductoCarrito(
-	IN _NombreProducto VARCHAR(30),
+	IN _NombreProducto VARCHAR(80),
     IN _IDCarrito INTEGER,
     IN _Cantidad INTEGER)
 BEGIN
 	DECLARE _ID_Producto INTEGER;
     DECLARE _Stock INTEGER;
+    DECLARE _ANTES INTEGER;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
@@ -620,7 +652,16 @@ BEGIN
                 IF(_Cantidad > _Stock) THEN
 					SET _Cantidad = _Stock;
 				END IF;
-                INSERT INTO Productos_Carrito(ID_Producto, ID_Carrito, Cantidad) VALUES (_ID_Producto, _IDCarrito, _Cantidad);
+                IF(SELECT COUNT(*) FROM Productos_Carrito WHERE ID_Carrito = _IDCarrito AND ID_Producto = _ID_Producto) = 1 THEN 
+                    SET _ANTES = SELECT Cantidad FROM Productos_Carrito WHERE ID_Carrito = _IDCarrito AND ID_Producto = _ID_Producto;
+                    SET _Cantidad = _Cantidad + _ANTES;
+                    IF(_Cantidad > _Stock) THEN
+					    SET _Cantidad = _Stock;
+				    END IF;
+                    UPDATE Productos_Carrito SET Cantidad = _Cantidad WHERE ID_Carrito = _IDCarrito AND ID_Producto = _ID_Producto
+                ELSE 
+                    INSERT INTO Productos_Carrito(ID_Producto, ID_Carrito, Cantidad) VALUES (_ID_Producto, _IDCarrito, _Cantidad);
+                END IF;
                 UPDATE CarritoCompras SET Total = Total(_IDCarrito) WHERE ID = _IDCarrito;
 			END IF;
 		END IF;
@@ -690,16 +731,14 @@ CREATE TABLE IF NOT EXISTS Productos(
     ID_Categoria INTEGER
 );
 
+CREATE TABLE IF NOT EXISTS Productos_Pedido(
+	ID_Producto INTEGER,
+    ID_Pedido INTEGER,
+    Cantidad INTEGER,
+    PRIMARY KEY(ID_Producto, ID_Pedido)
+);
+
 */
-DELIMITER //
-DROP FUNCTION IF EXISTS Total; //
-CREATE FUNCTION Total(
-	DNI_Usuario
-) RETURNS INT DETERMINISTIC
-BEGIN
-	DECLARE _Total;
-    SET _Total = (SELECT SUM(P.Precio*PC.Cantidad) FROM Productos_Carrito PC, Productos P WHERE PC.ID_Carrito = DNI_Usuario AND PC.ID_Producto = P.ID) 
-END;
 
 DELIMITER //
 DROP PROCEDURE IF EXISTS crear_Pedido; //
@@ -710,6 +749,7 @@ CREATE PROCEDURE crear_Pedido(
 BEGIN
     DECLARE _Total INTEGER;
 	DECLARE _Fecha DATETIME;
+    DECLARE _IDPedido INTEGER;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @error_string = MESSAGE_TEXT;
@@ -720,8 +760,10 @@ BEGIN
 		SET _Fecha = NOW();
         SET _Total = Total(_DNI_Usuario);
         IF (_Total > 0) THEN
-			INSERT INTO Pedidos(Fecha, Estado, DNI_Usuario, ID_Direccion, Total, ID_Cupon) VALUES (_Fecha, "Pendiente", _DNI_Usuario, _ID_Direccion, _Total, _ID_Cupon);
-		END IF;
+            INSERT INTO Pedidos(Fecha, Estado, DNI_Usuario, ID_Direccion, Total) VALUES (_Fecha, "Pendiente", _DNI_Usuario, _ID_Direccion, _Total);
+            SET _IDPedido = (SELECT last_insert_id());
+            call vaciar_Carrito(_DNI_Usuario);
+        END IF;
     COMMIT;
 END;
 //

@@ -118,11 +118,11 @@ call insertar_Categoria('Tenis','Las mejores camisetas para jugar Tenis');
 call insertar_Categoria('Voleyball','Las mejores camisetas para jugar el popular deporte del Volleyball');
 call insertar_Categoria('Baseball','Las camisetas de mejor calidad para este deporte tan famoso.');
 call insertar_Categoria('Coleccion Doil','Camisetas del reconocido confeccionista Doil Leari.');
-call insertar_Categoria('Casuales','Del dia a dia, comodas y sencillas para las actividades diarias.')
-call insertar_Categoria('Especiales','Camisetas unicas y con stock limitado.')
-call insertar_Categoria('Segunda Mano','Dale una segunda oportunidad a la ropa.')
-call insertar_Categoria('Atletismo','Tus favoritas de calidad.')
-call insertar_Categoria('Rugby','Las mejores camisetas de tus selecciones favoritas.')
+call insertar_Categoria('Casuales','Del dia a dia, comodas y sencillas para las actividades diarias.');
+call insertar_Categoria('Especiales','Camisetas unicas y con stock limitado.');
+call insertar_Categoria('Segunda Mano','Dale una segunda oportunidad a la ropa.');
+call insertar_Categoria('Atletismo','Tus favoritas de calidad.');
+call insertar_Categoria('Rugby','Las mejores camisetas de tus selecciones favoritas.');
 
 # Insertando proveedores
 call insertar_Proveedor('Disenos Peru','dperu@gmail.com');
@@ -173,4 +173,8 @@ call insertar_ProductoCarrito('Camiseta de la Seleccion de PSG - N30', 75122018,
 call insertar_ProductoCarrito('Camiseta de la Seleccion Peruana - N9', 72784548, 8);
 call insertar_ProductoCarrito('Camiseta de la Seleccion de Bayern Munich - N8', 92048497, 6);
 call insertar_ProductoCarrito('Camiseta de la Seleccion Argentina - N10', 98140854, 4);
-call insertar_ProductoCarrito('Camiseta Basketball Chicago Bulls', 90231873, 6);
+call insertar_ProductoCarrito('Camiseta Basketball Chicago Bulls', 90231873, 6);}
+
+call insertar_ProductoCarrito('Camiseta de futbol turquesa - N1', 18795457, 10);
+
+call crear_Pedido(70861091, 1, 0);
