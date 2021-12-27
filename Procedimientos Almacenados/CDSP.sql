@@ -504,7 +504,7 @@ DELIMITER;
 DELIMITER //
 DROP PROCEDURE IF EXISTS nuevo_ProveedorProducto; //
 CREATE PROCEDURE nuevo_ProveedorProducto(
-	IN _NombreProducto VARCHAR(30), 
+	IN _NombreProducto VARCHAR(80), 
     IN _NombreProveedor VARCHAR(30))
 BEGIN
     DECLARE _ID_Proveedor INTEGER;
@@ -531,7 +531,7 @@ DELIMITER;
 DELIMITER //
 DROP PROCEDURE IF EXISTS agregar_ProductoStock; //
 CREATE PROCEDURE agregar_ProductoStock(
-	IN _Nombre VARCHAR(30),
+	IN _Nombre VARCHAR(80),
     IN _PlusStock INTEGER
     )
 BEGIN
